@@ -334,15 +334,18 @@
       "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
     {% endif %}
     "sameAs": [
-      {{ settings.social_twitter_link | json }},
-      {{ settings.social_facebook_link | json }},
-      {{ settings.social_pinterest_link | json }},
-      {{ settings.social_instagram_link | json }},
-      {{ settings.social_tiktok_link | json }},
-      {{ settings.social_tumblr_link | json }},
-      {{ settings.social_snapchat_link | json }},
-      {{ settings.social_youtube_link | json }},
-      {{ settings.social_vimeo_link | json }}
+      {%- assign social_sep = '' -%}
+      {%- if settings.social_twitter_link != blank -%}{{ social_sep }}{{ settings.social_twitter_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_facebook_link != blank -%}{{ social_sep }}{{ settings.social_facebook_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_pinterest_link != blank -%}{{ social_sep }}{{ settings.social_pinterest_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_instagram_link != blank -%}{{ social_sep }}{{ settings.social_instagram_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_tiktok_link != blank -%}{{ social_sep }}{{ settings.social_tiktok_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_tumblr_link != blank -%}{{ social_sep }}{{ settings.social_tumblr_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_snapchat_link != blank -%}{{ social_sep }}{{ settings.social_snapchat_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_youtube_link != blank -%}{{ social_sep }}{{ settings.social_youtube_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_vimeo_link != blank -%}{{ social_sep }}{{ settings.social_vimeo_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_linkedin_link != blank -%}{{ social_sep }}{{ settings.social_linkedin_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
+      {%- if settings.social_whatsapp_link != blank -%}{{ social_sep }}{{ settings.social_whatsapp_link | json }}{%- assign social_sep = ',' -%}{%- endif -%}
     ],
     "url": {{ request.origin | append: page.url | json }}
   }
