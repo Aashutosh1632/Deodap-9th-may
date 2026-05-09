@@ -1,0 +1,1080 @@
+
+{{ 'customer.css' | asset_url | stylesheet_tag }}
+{{ 'new-account.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'customer.js' | asset_url }}" defer></script>
+
+{%- style -%}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  /* ── Page Wrap ── */
+  .acc-page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .acc-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 28px;
+    letter-spacing: -0.3px;
+  }
+
+  /* ── Grid: 2 columns ── */
+  .acc-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 640px) {
+    .acc-card-grid { grid-template-columns: 1fr; }
+    .acc-page-title { font-size: 22px; }
+  }
+
+  /* ── Card Wrapper ── */
+  .acc-card-wrap {
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .acc-card-wrap.open {
+    border-color: #e8201f;
+    box-shadow: 0 4px 20px rgba(232,32,31,0.10);
+  }
+
+  /* ── Card Header (clickable row) ── */
+  .acc-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+    user-select: none;
+    background: #fff;
+    transition: background 0.15s;
+  }
+  .acc-card-wrap.open .acc-card-header { background: #fff9f9; }
+  .acc-card-header:hover { background: #fafafa; }
+
+  .acc-card-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e8201f;
+  }
+  .acc-card-icon svg { width: 28px; height: 28px; }
+
+  .acc-card-text { flex: 1; min-width: 0; }
+  .acc-card-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 2px; }
+  .acc-card-sub { font-size: 13px; color: #888; line-height: 1.4; }
+
+  /* Chevron rotates on open */
+  .acc-chevron {
+    flex-shrink: 0;
+    color: #bbb;
+    transition: transform 0.25s ease, color 0.2s;
+  }
+  .acc-card-wrap.open .acc-chevron {
+    transform: rotate(180deg);
+    color: #e8201f;
+  }
+
+  /* ── Expandable Content Body ── */
+  .acc-card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1);
+  }
+  .acc-card-wrap.open .acc-card-body { max-height: 2000px; }
+
+  .acc-card-body-inner {
+    padding: 20px 20px 20px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* ── Track Order ── */
+  .trk-head { font-size: 18px; font-weight: 700; color: #111; margin-top: 16px; text-transform: uppercase; }
+  .trk-con { font-size: 14px; color: #555; margin-top: 10px; line-height: 1.6; }
+  .trk-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 16px; padding: 0 22px; height: 42px;
+    background: #e8201f; color: #fff !important; font-size: 14px; font-weight: 600;
+    border-radius: 6px; text-decoration: none !important; border: 1.5px solid #e8201f;
+    transition: background 0.18s, color 0.18s;
+  }
+  .trk-btn:hover { background: #fff; color: #e8201f !important; }
+
+  /* ── Address list ── */
+  .cst-deaf-add { list-style: none; margin-top: 12px; }
+  .cst-deaf-add li { padding: 14px 0; border-bottom: 1px solid #f0f0f0; }
+  .defa-text {
+    display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 600;
+    color: #e8201f; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .edit-btncst, .dlt-btncst {
+    display: inline-block; margin-top: 8px; margin-right: 6px; padding: 5px 12px;
+    border-radius: 5px; font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1.5px solid #ddd; background: #fff; color: #333; transition: all 0.15s;
+  }
+  .edit-btncst:hover { border-color: #333; }
+  .dlt-btncst { color: #e8201f; border-color: #e8201f; }
+  .dlt-btncst:hover { background: #e8201f; color: #fff; }
+  .cst-edit-address {
+    display: none; margin-top: 12px; padding: 14px;
+    background: #fafafa; border-radius: 8px; border: 1px solid #eee;
+  }
+  .cst-edit-address h2 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+  .cst-edit-address .field { margin-bottom: 10px; display: flex; flex-direction: column; gap: 3px; }
+  .cst-edit-address input, .cst-edit-address select {
+    width: 100%; padding: 8px 12px; border: 1.5px solid #ddd;
+    border-radius: 5px; font-size: 13px; outline: none; transition: border-color 0.15s;
+  }
+  .cst-edit-address input:focus, .cst-edit-address select:focus { border-color: #e8201f; }
+  .cst-edit-address label { font-size: 11px; color: #666; font-weight: 500; }
+  .cst-editsub, .cst-editclear {
+    padding: 7px 16px; border-radius: 5px; font-size: 13px;
+    font-weight: 600; cursor: pointer; margin-right: 6px; margin-top: 6px;
+  }
+  .cst-editsub { background: #e8201f; color: #fff; border: none; }
+  .cst-editclear { background: #fff; color: #333; border: 1.5px solid #ddd; }
+
+  /* ── Add New Address Button ── */
+  .new-acc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px 20px;
+    background: #fff;
+    color: #e8201f;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: border-color 0.18s, background 0.18s;
+  }
+  .new-acc:hover { border-color: #e8201f; background: #fff9f9; }
+
+  /* ── Add Address Form Box ── */
+  .cst-form {
+    margin-top: 14px;
+    background: #fff;
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .cst-form-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 16px;
+  }
+
+  /* Two-column row */
+  .cst-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .cst-form-row.three-col { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* Single full-width field */
+  .cst-form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+  }
+  .cst-form-field input,
+  .cst-form-field select,
+  .cst-form-row input,
+  .cst-form-row select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .cst-form-field input:focus,
+  .cst-form-field select:focus,
+  .cst-form-row input:focus,
+  .cst-form-row select:focus { border-color: #e8201f; }
+  .cst-form-field input::placeholder,
+  .cst-form-row input::placeholder { color: #aaa; }
+
+  /* Phone + default checkbox row */
+  .cst-form-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .cst-form-default {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #444;
+  }
+  .cst-form-default input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #e8201f;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Action buttons */
+  .cst-form-actions { display: flex; gap: 12px; }
+  .add-addres-btn {
+    flex: 1;
+    padding: 11px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    transition: background 0.18s, color 0.18s;
+  }
+  .add-addres-btn:not(.close_form) {
+    background: #e8201f; color: #fff; border: 1.5px solid #e8201f;
+  }
+  .add-addres-btn:not(.close_form):hover { background: #c41a19; border-color: #c41a19; }
+  .add-addres-btn.close_form {
+    background: #e8201f; color: #fff; border: 1.5px solid #e8201f;
+  }
+  .add-addres-btn.close_form:hover { background: #c41a19; border-color: #c41a19; }
+
+  .lbl-clr { font-size: 12px; color: #555; }
+  .hidden { display: none !important; }
+
+  /* Pagination */
+  .pagination ul { display: flex; gap: 6px; list-style: none; margin-top: 16px; flex-wrap: wrap; }
+  .pagination a, .pagination span {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 5px; border: 1.5px solid #ddd;
+    font-size: 13px; color: #333; text-decoration: none; transition: all 0.15s;
+  }
+  .pagination a:hover { border-color: #e8201f; color: #e8201f; }
+  .pagination span[aria-current] { background: #e8201f; color: #fff; border-color: #e8201f; }
+
+
+
+  /* ── Tracking Orders List ── */
+.tracking-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+.tracking-order-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+  transition: all 0.2s;
+}
+.tracking-order-item:hover {
+  border-color: #e8201f;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.tracking-order-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tracking-order-number {
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+}
+.tracking-order-date {
+  font-size: 12px;
+  color: #888;
+}
+.tracking-number-box {
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 10px 0;
+  font-size: 13px;
+  border: 1px solid #e0e0e0;
+}
+.tracking-label {
+  color: #666;
+  font-weight: 500;
+}
+.tracking-value {
+  color: #e8201f;
+  font-weight: 600;
+  margin-left: 8px;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+
+
+
+/* ═══════════════════════════════════════════════════════
+   Account Card: Recently Viewed (pdp-slick scoped fix)
+════════════════════════════════════════════════════════ */
+
+/* Hide redundant title & clear-all header — card header already shows it */
+[data-card="recently_viewed"] .pdp-viewed-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+[data-card="recently_viewed"] .pdp-viewed-title {
+  display: none;
+}
+[data-card="recently_viewed"] .clear-all-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #888;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+[data-card="recently_viewed"] .clear-all-btn:hover {
+  border-color: #e8201f;
+  color: #e8201f;
+}
+
+/* Wrapper sizing */
+[data-card="recently_viewed"] .pdp-viewed-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+/* Slick outer container — add side padding for arrow space */
+[data-card="recently_viewed"] .pdp-viewed-section {
+  margin: 0 28px;
+}
+
+/* Each slick slide — uniform card look */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide {
+  padding: 0 6px;
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════════
+   Account Card: Recently Viewed — Card Styling
+════════════════════════════════════════════════ */
+
+/* Slide wrapper */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide {
+  padding: 0 5px;
+  box-sizing: border-box;
+}
+
+/* Card box */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide > div {
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide > div:hover {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+}
+
+/* Product image */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* ── X / Remove button — top right ── */
+[data-card="recently_viewed"] .pdp-viewed-section .remove-product,
+[data-card="recently_viewed"] .pdp-viewed-section .clear-product,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="remove"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="close-btn"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="delete"] {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  color: #e8201f;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  line-height: 1;
+  padding: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+[data-card="recently_viewed"] .pdp-viewed-section .remove-product:hover,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="remove"]:hover {
+  background: #e8201f;
+  color: #fff;
+  border-color: #e8201f;
+}
+
+/* ── Card content padding area ── */
+[data-card="recently_viewed"] .pdp-viewed-section .product-info,
+[data-card="recently_viewed"] .pdp-viewed-section .card-info,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="product-info"],
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide > div > a > div,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide > div > div:last-child {
+  padding: 8px 10px 10px;
+}
+
+/* ── Price row: sale + compare on same line ── */
+[data-card="recently_viewed"] .pdp-viewed-section .price,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="price-wrapper"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="product-price"] {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+/* Sale / current price */
+[data-card="recently_viewed"] .pdp-viewed-section .price-item--sale,
+[data-card="recently_viewed"] .pdp-viewed-section .price-item--regular,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="sale-price"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="current-price"],
+[data-card="recently_viewed"] .pdp-viewed-section .money:first-child {
+  font-size: 14px;
+  font-weight: 700;
+  color: #e8201f;
+  text-decoration: none;
+}
+
+[data-card="recently_viewed"] .pdp-viewed-price{
+  color: #e8201f;
+}
+
+/* Compare / original price (strikethrough) */
+[data-card="recently_viewed"] .pdp-viewed-section .price-item--compare,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="compare-price"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="original-price"],
+[data-card="recently_viewed"] .pdp-viewed-section s .money,
+[data-card="recently_viewed"] .pdp-viewed-section del .money,
+[data-card="recently_viewed"] .pdp-viewed-section s,
+[data-card="recently_viewed"] .pdp-viewed-section del {
+  font-size: 11px;
+  font-weight: 400;
+  color: #999;
+  text-decoration: line-through;
+}
+
+/* ── Product Title ── */
+[data-card="recently_viewed"] .pdp-viewed-section .product-title,
+[data-card="recently_viewed"] .pdp-viewed-section [class*="product-title"],
+[data-card="recently_viewed"] .pdp-viewed-section [class*="card-title"],
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide h2,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide h3,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide p.title,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-slide a p {
+  font-size: 12px;
+  font-weight: 500;
+  color: #222;
+  line-height: 1.45;
+  margin: 0;
+  padding: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+/* ── Slick Arrow Buttons ── */
+[data-card="recently_viewed"] .pdp-viewed-section {
+  margin: 0;
+  position: relative;
+}
+
+[data-card="recently_viewed"] .pdp-viewed-section .acc-slick-prev,
+[data-card="recently_viewed"] .pdp-viewed-section .acc-slick-next,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.10);
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev {
+  left: -6px;
+}
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next {
+  right: -6px;
+}
+
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev:hover,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next:hover {
+  border-color: #e8201f;
+  box-shadow: 0 2px 8px rgba(232,32,31,0.15);
+}
+
+/* Override Slick default arrows */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev::before,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next::before {
+  display: none;
+}
+
+/* SVG icon */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev svg,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next svg {
+  stroke: #555;
+  transition: stroke 0.18s;
+  display: block;
+}
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev:hover svg,
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next:hover svg {
+  stroke: #e8201f;
+}
+
+
+[data-card="recently_viewed"] .pdp-viewed-section .slick-prev {
+  left: -10px !important;
+}
+
+[data-card="recently_viewed"] .pdp-viewed-section .slick-next {
+  right: -10px !important;
+}
+
+/* Disabled state */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Remove dots */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-dots {
+  display: none;
+}
+
+/* Padding fix */
+[data-card="recently_viewed"] .pdp-viewed-section .slick-list {
+  padding: 0 18px;
+}
+
+/* Bottom spacing */
+[data-card="recently_viewed"] .acc-card-body-inner {
+  padding-bottom: 20px;
+}
+
+
+{%- endstyle -%}
+
+<section id="new-acc-add" class="account-page section-{{ section.id }}-padding">
+  <div class="acc-page-wrap">
+    <h1 class="acc-page-title">Your Account</h1>
+
+    <div class="acc-card-grid">
+
+      <!-- ── Your Orders ── -->
+      <div class="acc-card-wrap" data-card="my_order">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="18" rx="2"/>
+              <path d="M7 8h10M7 12h10M7 16h6"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Your Orders</div>
+            <div class="acc-card-sub">Track, return, or buy things again</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner">
+            {%- render 'new-order' -%}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Your Addresses ── -->
+      <div class="acc-card-wrap" data-card="addresses">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Your Addresses</div>
+            <div class="acc-card-sub">Edit addresses for orders and gifts</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner" data-customer-addresses>
+            {%- paginate customer.addresses by 5 -%}
+            <ul role="list" class="cst-deaf-add">
+              {%- for address in customer.addresses -%}
+                <li data-address>
+                  {{ address | format_address }}
+                  {%- if address == customer.default_address -%}
+                    <p class="defa-text">Default</p>
+                  {%- endif -%}
+                  <button type="button" id="EditFormButton_{{ address.id }}"
+                    aria-label="{{ 'customer.addresses.edit_address' | t }} {{ forloop.index }}"
+                    aria-controls="EditAddress_{{ address.id }}" aria-expanded="false"
+                    data-address-id="{{ address.id }}" class="edit-btncst">
+                    {{ 'customer.addresses.edit' | t }}
+                  </button>
+                  <button type="button"
+                    aria-label="{{ 'customer.addresses.delete' | t }} {{ forloop.index }}"
+                    data-target="{{ address.url }}"
+                    data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}"
+                    class="dlt-btncst">
+                    {{ 'customer.addresses.delete' | t }}
+                  </button>
+                  <div class="cst-edit-address" id="EditAddress_{{ address.id }}">
+                    <h2>{{ 'customer.addresses.edit_address' | t }}</h2>
+                    {%- form 'customer_address', address -%}
+                      <input type="hidden" name="return_to" value="{{ request.path }}?tab=addresses">
+                      <div class="field"><input type="text" class="input-border" id="AddressFirstName_{{ form.id }}" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name" placeholder="{{ 'customer.addresses.first_name' | t }}" required><label for="AddressFirstName_{{ form.id }}">{{ 'customer.addresses.first_name' | t }}</label></div>
+                      <div class="field"><input type="text" class="input-border" id="AddressLastName_{{ form.id }}" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name" placeholder="{{ 'customer.addresses.last_name' | t }}" required><label for="AddressLastName_{{ form.id }}">{{ 'customer.addresses.last_name' | t }}</label></div>
+                      <div class="field"><input type="text" class="input-border" id="AddressAddress1_{{ form.id }}" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1" placeholder="{{ 'customer.addresses.address1' | t }}" required><label for="AddressAddress1_{{ form.id }}">{{ 'customer.addresses.address1' | t }}</label></div>
+                      <div class="field"><input type="text" class="input-border" id="AddressCity_{{ form.id }}" name="address[city]" value="{{ form.city }}" autocomplete="address-level2" placeholder="{{ 'customer.addresses.city' | t }}"><label for="AddressCity_{{ form.id }}">{{ 'customer.addresses.city' | t }}</label></div>
+                      <div><label for="AddressCountry_{{ form.id }}">{{ 'customer.addresses.country' | t }}</label><div class="select"><select id="AddressCountry_{{ form.id }}" class="input-border" name="address[country]" data-address-country-select data-default="{{ form.country }}" data-form-id="{{ form.id }}" autocomplete="country">{{ all_country_option_tags }}</select></div></div>
+                      <div id="AddressProvinceContainer_{{ form.id }}" style="display:none;"><label for="AddressProvince_{{ form.id }}">{{ 'customer.addresses.province' | t }}</label><div class="select"><select id="AddressProvince_{{ form.id }}" class="input-border" name="address[province]" data-default="{{ form.province }}" autocomplete="address-level1"></select></div></div>
+                      <div class="field"><input type="text" id="AddressZip_{{ form.id }}" class="input-border" name="address[zip]" value="{{ form.zip }}" autocapitalize="characters" autocomplete="postal-code" placeholder="{{ 'customer.addresses.zip' | t }}"><label for="AddressZip_{{ form.id }}">{{ 'customer.addresses.zip' | t }}</label></div>
+                      <div class="field"><input type="tel" id="AddressPhone_{{ form.id }}" class="input-border" name="address[phone]" value="{{ form.phone }}" autocomplete="tel" placeholder="{{ 'customer.addresses.phone' | t }}" required><label for="AddressPhone_{{ form.id }}">{{ 'customer.addresses.phone' | t }}</label></div>
+                      <div>{{ form.set_as_default_checkbox }}<label for="address_default_address_{{ form.id }}">{{ 'customer.addresses.set_default' | t }}</label></div>
+                      <div><button class="cst-editsub">{{ 'customer.addresses.update' | t }}</button><button class="cst-editclear" type="reset">{{ 'customer.addresses.cancel' | t }}</button></div>
+                    {%- endform -%}
+                  </div>
+                </li>
+              {%- endfor -%}
+            </ul>
+            <div data-address>
+              <button class="new-acc" type="button" aria-expanded="false" aria-controls="AddAddress">
+                + {{ 'customer.addresses.add_new' | t }}
+              </button>
+              <div class="cst-form hidden" id="AddAddress">
+                {%- form 'customer_address', customer.new_address -%}
+                  <input type="hidden" name="return_to" value="{{ request.path }}?tab=addresses">
+                  <p class="cst-form-title">Add a new address</p>
+
+                  <!-- First name + Last name -->
+                  <div class="cst-form-row">
+                    <input type="text" id="AddressFirstNameNew" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name" placeholder="First name" required>
+                    <input type="text" id="AddressLastNameNew" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name" placeholder="Last name" required>
+                  </div>
+
+                  <!-- Company -->
+                  <div class="cst-form-field">
+                    <input type="text" id="AddressCompanyNew" name="address[company]" value="{{ form.company }}" autocomplete="organization" placeholder="Company">
+                  </div>
+
+                  <!-- Address 1 -->
+                  <div class="cst-form-field">
+                    <input type="text" id="AddressAddress1New" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1" placeholder="Address 1" required>
+                  </div>
+
+                  <!-- Address 2 -->
+                  <div class="cst-form-field">
+                    <input type="text" id="AddressAddress2New" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2" placeholder="Address 2">
+                  </div>
+
+                  <!-- City + Country -->
+                  <div class="cst-form-row">
+                    <input type="text" id="AddressCityNew" name="address[city]" value="{{ form.city }}" autocomplete="address-level2" placeholder="City">
+                    <select id="AddressCountryNew" name="address[country]" data-default="{{ form.country }}" autocomplete="country" required>{{ all_country_option_tags }}</select>
+                  </div>
+
+                  <!-- Province (shown only if country has provinces) -->
+                  <div class="cst-form-field" id="AddressProvinceContainerNew" style="display:none;">
+                    <select id="AddressProvinceNew" name="address[province]" data-default="{{ form.province }}" autocomplete="address-level1"></select>
+                  </div>
+
+                  <!-- Postal code (half width) -->
+                  <div class="cst-form-row">
+                    <input type="text" id="AddressZipNew" name="address[zip]" value="{{ form.zip }}" autocapitalize="characters" autocomplete="postal-code" placeholder="Postal/ZIP code">
+                    <span></span>
+                  </div>
+
+                  <!-- Phone + Set as default -->
+                  <div class="cst-form-bottom-row">
+                    <input type="tel" id="AddressPhoneNew" name="address[phone]" value="{{ form.phone }}" autocomplete="tel" placeholder="Phone" required>
+                    <label class="cst-form-default">
+                      {{ form.set_as_default_checkbox }}
+                      <span>Set as default address</span>
+                    </label>
+                  </div>
+
+                  <!-- Buttons -->
+                  <div class="cst-form-actions">
+                    <button class="add-addres-btn" type="submit">Add address</button>
+                    <button class="add-addres-btn close_form" type="button">Close</button>
+                  </div>
+                {%- endform -%}
+              </div>
+            </div>
+            {%- if paginate.pages > 1 and paginate.parts.size > 0 -%}
+              <nav class="pagination" role="navigation">
+                <ul role="list">
+                  {%- if paginate.previous -%}<li><a href="{{ paginate.previous.url }}" aria-label="Previous">‹</a></li>{%- endif -%}
+                  {%- for part in paginate.parts -%}
+                    <li>
+                      {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+                      {%- elsif part.title == paginate.current_page -%}<span aria-current="page">{{ part.title }}</span>
+                      {%- else -%}<span>{{ part.title }}</span>{%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                  {%- if paginate.next -%}<li><a href="{{ paginate.next.url }}" aria-label="Next">›</a></li>{%- endif -%}
+                </ul>
+              </nav>
+            {%- endif -%}
+            {%- endpaginate -%}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Contact Us ── -->
+      <div class="acc-card-wrap" data-card="contact">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.8 12.8 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.8 12.8 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Contact Us</div>
+            <div class="acc-card-sub">Contact our customer service via phone or chat</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner">
+            {%- render 'custom-contact' -%}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Recently Viewed ── -->
+      <div class="acc-card-wrap" data-card="recently_viewed">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Recently Viewed</div>
+            <div class="acc-card-sub">Products you recently browsed</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner">
+            {% comment %} {%- render 'custom-recently-viewed' -%} {% endcomment %}
+            {%- render 'pdp-slick' -%}
+          </div>
+        </div>
+      </div>
+            
+      <!-- ── Track My Order ── -->
+      <div class="acc-card-wrap" data-card="track_order">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13" rx="1"/>
+              <path d="M16 8h4l3 3v5h-7V8z"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Track My Order</div>
+            <div class="acc-card-sub">Stay updated on your delivery status</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner">
+            <h2 class="trk-head">Track Your Orders</h2>
+      
+            {%- if customer -%}
+              {%- paginate customer.orders by 10 -%}
+                {%- if customer.orders.size > 0 -%}
+                  <div class="tracking-orders-list">
+                    {%- for order in customer.orders -%}
+                      {%- assign has_tracking = false -%}
+                      {%- assign tracking_number = '' -%}
+                      {%- assign tracking_url = '' -%}
+                
+                      {%- for line_item in order.line_items -%}
+                        {%- if line_item.fulfillment -%}
+                          {%- assign has_tracking = true -%}
+                          {%- assign tracking_number = line_item.fulfillment.tracking_number -%}
+                          {%- assign tracking_url = line_item.fulfillment.tracking_url -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                
+                      {%- if has_tracking and tracking_number != blank -%}
+                        <div class="tracking-order-item">
+                          <div class="tracking-order-info">
+                            <span class="tracking-order-number">Order #{{ order.order_number }}</span>
+                            <span class="tracking-order-date">{{ order.created_at | date: "%b %d, %Y" }}</span>
+                          </div>
+                          <div class="tracking-number-box">
+                            <span class="tracking-label">Tracking ID:</span>
+                            <span class="tracking-value">{{ tracking_number }}</span>
+                          </div>
+                          <a href="https://ship.deodap.in/tracking/{{ tracking_number }}" 
+                            class="trk-btn" 
+                            target="_blank"
+                            data-tracking="{{ tracking_number }}">
+                            Track Package →
+                          </a>
+                        </div>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+                {%- else -%}
+                  <p class="trk-con">You don't have any orders yet.</p>
+                {%- endif -%}
+          
+                {%- if paginate.pages > 1 -%}
+                  <div class="pagination">
+                    {{ paginate | default_pagination }}
+                  </div>
+                {%- endif -%}
+              {%- endpaginate -%}
+            {%- else -%}
+              <p class="trk-con">Please <a href="/account/login">log in</a> to track your orders.</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+      <!-- ── Tickets ── -->
+      <div class="acc-card-wrap" data-card="tickets">
+        <div class="acc-card-header" role="button" tabindex="0" aria-expanded="false" data-card-toggle>
+          <div class="acc-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2z"/>
+              <line x1="9" y1="12" x2="15" y2="12"/>
+            </svg>
+          </div>
+          <div class="acc-card-text">
+            <div class="acc-card-title">Tickets</div>
+            <div class="acc-card-sub">Manage your support tickets</div>
+          </div>
+          <div class="acc-chevron">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="acc-card-body">
+          <div class="acc-card-body-inner">
+            {%- render 'care-tickets-api' -%}
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /acc-card-grid -->
+  </div>
+</section>
+
+<script>
+window.addEventListener('load', function () {
+  if (typeof CustomerAddresses !== 'undefined') new CustomerAddresses();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── Accordion ── */
+  document.querySelectorAll('[data-card-toggle]').forEach(function (toggle) {
+    toggle.addEventListener('click', function () {
+      var card = toggle.closest('[data-card]');
+      var isOpen = card.classList.contains('open');
+
+      // Close all first
+      document.querySelectorAll('[data-card]').forEach(function (c) {
+        c.classList.remove('open');
+        c.querySelector('[data-card-toggle]').setAttribute('aria-expanded', 'false');
+      });
+
+      // If it was closed, open it now
+      if (!isOpen) {
+        card.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+        setTimeout(function () {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50);
+      }
+    });
+
+    // Keyboard
+    toggle.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+    });
+  });
+
+  /* ── Add new address toggle ── */
+  var newAccBtn    = document.querySelector('.new-acc');
+  var addAddrForm  = document.getElementById('AddAddress');
+  var closeFormBtn = document.querySelector('.close_form');
+
+  if (newAccBtn && addAddrForm) {
+    newAccBtn.addEventListener('click', function () {
+      addAddrForm.classList.toggle('hidden');
+      newAccBtn.setAttribute('aria-expanded', !addAddrForm.classList.contains('hidden'));
+    });
+  }
+  if (closeFormBtn && addAddrForm) {
+    closeFormBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      addAddrForm.classList.add('hidden');
+      if (newAccBtn) newAccBtn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  /* ── Auto-open from URL ?tab= ── */
+  var activeTab = new URLSearchParams(window.location.search).get('tab');
+  if (activeTab) {
+    var target = document.querySelector('[data-card="' + activeTab + '"]');
+    if (target) {
+      target.classList.add('open');
+      target.querySelector('[data-card-toggle]').setAttribute('aria-expanded', 'true');
+    }
+  }
+
+});
+
+(function initAccRvSlick() {
+  var card = document.querySelector('[data-card="recently_viewed"]');
+  if (!card) return;
+
+  var slickTarget = card.querySelector('.js-pdp-viewed');
+  if (!slickTarget) return;
+  var attempts = 0;
+  var maxAttempts = 30; /* 3 seconds max */
+
+  var poll = setInterval(function () {
+    attempts++;
+
+    var $ = window.jQuery;
+    if (!$ || !$.fn || !$.fn.slick) {
+      if (attempts >= maxAttempts) clearInterval(poll);
+      return; /* Slick not loaded yet */
+    }
+
+    var $slider = $(slickTarget);
+
+    /* Wait until slick is initialized AND has at least 1 slide */
+    var isSlickInit = $slider.hasClass('slick-initialized');
+    var hasSlides   = slickTarget.querySelectorAll('.slick-slide:not(.slick-cloned)').length > 0;
+
+    if (!isSlickInit || !hasSlides) {
+      if (attempts >= maxAttempts) clearInterval(poll);
+      return;
+    }
+
+    clearInterval(poll);
+
+    /* Destroy existing instance, re-init with account card settings */
+    $slider.slick('unslick');
+
+$slider.slick({
+  slidesToShow  : 2,
+  slidesToScroll: 1,
+  infinite      : true,
+  arrows        : true,
+  dots          : false,   /* ← removes bullet dots completely */
+  adaptiveHeight: false,
+  swipeToSlide  : true,
+
+  /* Custom SVG caret arrows instead of "Previous / Next" text */
+  prevArrow: '<button type="button" class="acc-slick-prev slick-prev" aria-label="Previous">'
+           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>'
+           + '</button>',
+  nextArrow: '<button type="button" class="acc-slick-next slick-next" aria-label="Next">'
+           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
+           + '</button>',
+
+  responsive: [
+    {
+      breakpoint: 480,
+      settings: { slidesToShow: 1, slidesToScroll: 1 }
+    }
+  ]
+});
+
+  }, 100); 
+})();
+</script>
+
