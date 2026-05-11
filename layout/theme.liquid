@@ -49,12 +49,17 @@
       {%- if template == 'index' -%}
       <style>
          svg.abcd {margin-bottom: -80px;}
-         /* INP/render perf: skip layout & paint for below-the-fold homepage sections until they near the viewport. contain-intrinsic-size reserves vertical space to avoid scroll-jump. */
-         [id^="shopify-section-featured_home_collection"],
-         [id^="shopify-section-social_media_icons"],
-         [id^="shopify-section-dropshipping_section"] {
+         /* INP/render perf: skip layout & paint for below-the-fold homepage sections until they near the viewport. Selector uses [id*=...] because Shopify section IDs are "shopify-section-template--{numeric}__{handle}". 500px intrinsic-size keeps placeholders visually unobtrusive. */
+         [id*="featured_home_collection"],
+         [id*="social_media_icons"],
+         [id*="dropshipping_section"] {
             content-visibility: auto;
-            contain-intrinsic-size: 0 800px;
+            contain-intrinsic-size: 0 500px;
+         }
+         /* Slideshow placeholder background — shows brand red instead of black while the LCP banner downloads. */
+         [id*="slideshow"] .slideshow-image-wrapper,
+         [id*="slideshow"] .banner {
+            background-color: #ec1a23;
          }
       </style>
       {%- endif -%}
