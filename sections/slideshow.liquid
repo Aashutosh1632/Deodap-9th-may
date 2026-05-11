@@ -14,8 +14,8 @@
   <link
     rel="preload"
     as="image"
-    href="{{ first_slide.settings.mobile_image | image_url: width: 750 }}"
-    imagesrcset="{{ first_slide.settings.mobile_image | image_url: width: 375 }} 375w, {{ first_slide.settings.mobile_image | image_url: width: 550 }} 550w, {{ first_slide.settings.mobile_image | image_url: width: 750 }} 750w, {{ first_slide.settings.mobile_image | image_url: width: 1100 }} 1100w, {{ first_slide.settings.mobile_image | image_url: width: 1500 }} 1500w"
+    href="{{ first_slide.settings.mobile_image | image_url: width: 550 }}"
+    imagesrcset="{{ first_slide.settings.mobile_image | image_url: width: 375 }} 375w, {{ first_slide.settings.mobile_image | image_url: width: 550 }} 550w, {{ first_slide.settings.mobile_image | image_url: width: 750 }} 750w, {{ first_slide.settings.mobile_image | image_url: width: 1100 }} 1100w"
     imagesizes="100vw"
     fetchpriority="high"
     media="(max-width: 749px)">
@@ -23,7 +23,7 @@
   <link
     rel="preload"
     as="image"
-    href="{{ first_slide.settings.image | image_url: width: 750 }}"
+    href="{{ first_slide.settings.image | image_url: width: 550 }}"
     imagesrcset="{{ first_slide.settings.image | image_url: width: 375 }} 375w, {{ first_slide.settings.image | image_url: width: 550 }} 550w, {{ first_slide.settings.image | image_url: width: 750 }} 750w, {{ first_slide.settings.image | image_url: width: 1100 }} 1100w"
     imagesizes="100vw"
     fetchpriority="high"
