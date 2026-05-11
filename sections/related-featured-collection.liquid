@@ -1,7 +1,7 @@
-{{ 'component-card.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'component-card.css' | asset_url }}" media="print" onload="this.media='all'"><noscript>{{ 'component-card.css' | asset_url | stylesheet_tag }}</noscript>
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'custom-featured-collection.css' | asset_url | stylesheet_tag }}
-{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'component-slider.css' | asset_url }}" media="print" onload="this.media='all'"><noscript>{{ 'component-slider.css' | asset_url | stylesheet_tag }}</noscript>
 {{ 'template-collection.css' | asset_url | stylesheet_tag }}
 {{ 'quantity-selector-setup.css' | asset_url | stylesheet_tag }}
 {%- if section.settings.image_shape == 'blob' -%}

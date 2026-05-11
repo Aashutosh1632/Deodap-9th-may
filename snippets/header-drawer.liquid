@@ -388,7 +388,7 @@
         <div class="mobile-product-card"> 
           
           <a href="{{ product.url }}"> 
-            <img loading="lazy" decoding="async" src="{{ product.featured_image | img_url: '200x' }}" alt="{{ product.title }}">
+            <img loading="lazy" decoding="async" src="{{ product.featured_image | image_url: width: 200 }}" alt="{{ product.title | escape }}" width="200" height="{% if product.featured_image.aspect_ratio %}{{ 200 | divided_by: product.featured_image.aspect_ratio | round }}{% else %}200{% endif %}">
             <p class="product-title-header-drawer">{{ product.title }}</p>
           </a>
 
