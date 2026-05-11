@@ -6,17 +6,21 @@
 <nav class="header__inline-menu">
   <ul class="list-menu list-menu--inline" role="list">
     {%- for link in section.settings.menu.links -%}
+      {%- comment -%} Perf: cache link.links once — was being resolved 3x per iteration (has_grandchild check + L2 list + L3 panel). {%- endcomment -%}
+      {%- assign sub_links = link.links -%}
       <li class="header__menu-li">
-        {%- if link.links != blank -%}
+        {%- if sub_links != blank -%}
           <header-menu>
             {%- assign has_grandchild = false -%}
             {%- assign first_l2_handle = nil -%}
-            {%- for child in link.links -%}
+            {%- for child in sub_links -%}
               {%- if child.links != blank -%}
                 {%- assign has_grandchild = true -%}
                 {%- if first_l2_handle == nil -%}
                   {%- assign first_l2_handle = child.handle -%}
                 {%- endif -%}
+                {%- comment -%} Once we know there's at least one grandchild and have captured the first L2 handle, no need to keep iterating. {%- endcomment -%}
+                {%- break -%}
               {%- endif -%}
             {%- endfor -%}
 
@@ -41,7 +45,7 @@
                 <div class="mega-menu__wrapper page-width">
                   <!-- LEFT: Level-2 -->
                   <ul class="mega-menu__l2-list" role="list">
-                    {%- for child in link.links -%}
+                    {%- for child in sub_links -%}
                       {%- assign l2_handle = child.handle -%}
                       <li class="mega-menu__l2-item"
                           data-l2="{{ l2_handle }}"
@@ -61,7 +65,7 @@
 
                   <!-- RIGHT: Level-3 -->
                   <div class="mega-menu__l3-panel">
-                    {%- for child in link.links -%}
+                    {%- for child in sub_links -%}
                       {%- if child.links != blank -%}
                         <ul class="mega-menu__l3-list list-unstyled"
                             data-l2="{{ child.handle }}">
