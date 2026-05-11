@@ -377,10 +377,42 @@
           {% endif %}
         </ol>
       </nav>
-      {% if section.settings.enable_divider %}   
+      {% if section.settings.enable_divider %}
           <div id="breadcrumbs-divider"></div>
       {% endif %}
     </div>
+
+    {%- comment -%} BreadcrumbList structured data (schema.org) — mirrors the visible breadcrumb so search engines and AI agents understand site hierarchy and can show breadcrumb rich results. {%- endcomment -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ shop.url | json }} }
+          {%- assign bc_pos = 1 -%}
+          {%- if link_depth1 -%}
+            {%- assign bc_pos = bc_pos | plus: 1 -%}
+            ,{ "@type": "ListItem", "position": {{ bc_pos }}, "name": {{ link_depth1.title | json }}, "item": {{ shop.url | append: link_depth1.url | json }} }
+          {%- endif -%}
+          {%- if link_depth2 -%}
+            {%- unless template == 'product' -%}
+              {%- assign bc_pos = bc_pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ bc_pos }}, "name": {{ link_depth2.title | json }}, "item": {{ shop.url | append: link_depth2.url | json }} }
+            {%- endunless -%}
+          {%- endif -%}
+          {%- if link_depth3 -%}
+            {%- assign bc_pos = bc_pos | plus: 1 -%}
+            ,{ "@type": "ListItem", "position": {{ bc_pos }}, "name": {{ link_depth3.title | json }}, "item": {{ shop.url | append: link_depth3.url | json }} }
+          {%- endif -%}
+          {%- assign bc_pos = bc_pos | plus: 1 -%}
+          {%- if template_type_other -%}
+            ,{ "@type": "ListItem", "position": {{ bc_pos }}, "name": {{ page_title | json }}, "item": {{ canonical_url | json }} }
+          {%- else -%}
+            ,{ "@type": "ListItem", "position": {{ bc_pos }}, "name": {{ current_template.title | json }}, "item": {{ canonical_url | json }} }
+          {%- endif -%}
+        ]
+      }
+    </script>
 
   {% endunless %}
 {%- endif -%}

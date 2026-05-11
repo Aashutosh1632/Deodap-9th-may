@@ -1,0 +1,1 @@
+{"name":"Breadcrumb","type":"aside","sections":{"breadcrumb":{"type":"Breadcrumb","settings":{"breadcrumbs_enabled":true,"breadcrumbs_menu_definition":"main-menu","prefer_shortest_path":false,"separator_shape":"triangle","font_size":14,"color_scheme":"","enable_divider":false,"divider_color":"#cccccc","padding_top":12,"padding_bottom":12}}},"order":["breadcrumb"]}

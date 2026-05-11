@@ -9,22 +9,6 @@
  */
 {
   "sections": {
-    "breadcrumb_jGTXTb": {
-      "type": "Breadcrumb",
-      "custom_css": [],
-      "settings": {
-        "breadcrumbs_enabled": true,
-        "breadcrumbs_menu_definition": "new-menu-dropdown",
-        "prefer_shortest_path": false,
-        "separator_shape": "triangle",
-        "font_size": 14,
-        "color_scheme": "",
-        "enable_divider": false,
-        "divider_color": "#cccccc",
-        "padding_top": 12,
-        "padding_bottom": 12
-      }
-    },
     "banner": {
       "type": "main-collection-banner",
       "disabled": true,
@@ -213,7 +197,6 @@
     }
   },
   "order": [
-    "breadcrumb_jGTXTb",
     "banner",
     "subcollection_section_XVqKbW",
     "product-grid",
