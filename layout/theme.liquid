@@ -46,6 +46,8 @@
       {%- if template == 'page' and noindex_handles contains page.handle -%}
       <meta name="robots" content="noindex">
       {%- endif -%}
+      <link rel="alternate" hreflang="en-IN" href="{{ canonical_url }}">
+      <link rel="alternate" hreflang="x-default" href="{{ canonical_url }}">
       {%- comment -%} Critical inline CSS — applies before any external stylesheet arrives. component-cart-drawer.css is loaded async (faster LCP); without this rule the cart-drawer element would lay out as a block and reserve ~400px of empty space at the top of the page until the async CSS arrives. position:fixed takes it out of normal flow; the existing inline visibility:hidden on the element keeps it invisible. external CSS handles open/close styling via the .active class. {%- endcomment -%}
       <style>
          cart-drawer { position: fixed; top: 0; left: 0; }
