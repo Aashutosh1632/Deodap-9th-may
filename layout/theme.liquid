@@ -49,6 +49,13 @@
       {%- if template == 'index' -%}
       <style>
          svg.abcd {margin-bottom: -80px;}
+         /* INP/render perf: skip layout & paint for below-the-fold homepage sections until they near the viewport. contain-intrinsic-size reserves vertical space to avoid scroll-jump. */
+         [id^="shopify-section-featured_home_collection"],
+         [id^="shopify-section-social_media_icons"],
+         [id^="shopify-section-dropshipping_section"] {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 800px;
+         }
       </style>
       {%- endif -%}
       {%- if settings.favicon != blank -%}
@@ -169,8 +176,17 @@
               f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-5W7H98N');
           }
+          // INP: defer loadAll() out of the interaction's task so the click/tap
+          // paint completes before we create the analytics script tags.
+          function scheduleLoad() {
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(loadAll, { timeout: 1000 });
+            } else {
+              setTimeout(loadAll, 0);
+            }
+          }
           var events = ['scroll','click','touchstart','keydown','mousemove'];
-          events.forEach(function(e){ window.addEventListener(e, loadAll, {once:true, passive:true}); });
+          events.forEach(function(e){ window.addEventListener(e, scheduleLoad, {once:true, passive:true}); });
           if ('requestIdleCallback' in window) {
             requestIdleCallback(loadAll, { timeout: 4000 });
           } else {
