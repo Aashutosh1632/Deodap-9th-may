@@ -9,6 +9,9 @@
         {{- 'icon-close.svg' | inline_asset_content -}}
       </span>
     </summary>
+    {%- comment -%} Perf: heavy mobile drawer content is wrapped in a <template> so the browser does not build it as live DOM during initial page load. On first hamburger click a small inline script clones the template into the live tree and removes the template. Saves DOM/layout/paint work and dramatically reduces JS query times across the site. Bytes on the wire are unchanged (use a true AJAX lazy-load for that). {%- endcomment -%}
+    <div id="menu-drawer-mount"></div>
+    <template id="menu-drawer-template">
     <div id="menu-drawer" class="gradient menu-drawer motion-reduce color-{{ section.settings.menu_color_scheme }}">
       <div class="menu-drawer__inner-container">
         <div class="menu-drawer__navigation-container">
@@ -461,6 +464,31 @@
         </div>
       </div>
     </div>
+    </template>
+    <script>
+      (function () {
+        var details = document.getElementById('Details-menu-drawer-container');
+        if (!details) return;
+        var summary = details.querySelector('summary');
+        if (!summary) return;
+        function unpack() {
+          var tpl = document.getElementById('menu-drawer-template');
+          var mount = document.getElementById('menu-drawer-mount');
+          if (!tpl || !mount) return;
+          mount.replaceWith(tpl.content.cloneNode(true));
+          tpl.remove();
+        }
+        // Unpack on first hamburger interaction (covers click + touch + keyboard).
+        summary.addEventListener('pointerdown', unpack, { once: true, passive: true });
+        summary.addEventListener('keydown', unpack, { once: true, passive: true });
+        // Also unpack on first idle moment so the rest of the page UI (search drawer, account drawer) does not see a missing menu DOM if it queries.
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(unpack, { timeout: 3000 });
+        } else {
+          setTimeout(unpack, 2000);
+        }
+      })();
+    </script>
   </details>
 </header-drawer>
           
