@@ -74,6 +74,44 @@
             {%- if product.available -%}
               {%- assign idx = forloop.index -%}
                 <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="grid__item{% if show_mobile_slider or show_desktop_slider %} slider__slide{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %} {% if idx > 0 %}hidden-product-{{ section.id }} hidden{% endif %}" {%- if settings.animations_reveal_on_scroll -%} data-cascade style="--animation-order: {{ forloop.index }};" {%- endif -%}>
+                  {%- comment -%} Product structured data (schema.org) for rich results and AI shopping agents. @id = canonical URL so duplicate emissions across desktop/mobile variants dedupe. {%- endcomment -%}
+                  <script type="application/ld+json">
+                    {
+                      "@context": "https://schema.org/",
+                      "@type": "Product",
+                      "@id": {{ shop.url | append: product.url | json }},
+                      "name": {{ product.title | json }},
+                      "url": {{ shop.url | append: product.url | json }}
+                      {%- if product.featured_image -%}
+                        ,"image": [{{ product.featured_image | image_url: width: 800 | prepend: 'https:' | json }}]
+                      {%- endif -%}
+                      {%- if product.description != blank -%}
+                        ,"description": {{ product.description | strip_html | truncatewords: 50 | json }}
+                      {%- endif -%}
+                      {%- assign sd_sku = product.selected_or_first_available_variant.sku -%}
+                      {%- if sd_sku != blank -%}
+                        ,"sku": {{ sd_sku | json }}
+                      {%- endif -%}
+                      {%- if product.vendor != blank -%}
+                        ,"brand": { "@type": "Brand", "name": {{ product.vendor | json }} }
+                      {%- endif -%}
+                      ,"offers": {
+                        {%- if product.price_varies -%}
+                          "@type": "AggregateOffer",
+                          "lowPrice": {{ product.price_min | divided_by: 100.0 | json }},
+                          "highPrice": {{ product.price_max | divided_by: 100.0 | json }},
+                          "offerCount": {{ product.variants.size | json }},
+                        {%- else -%}
+                          "@type": "Offer",
+                          "price": {{ product.price | divided_by: 100.0 | json }},
+                        {%- endif -%}
+                        "priceCurrency": {{ cart.currency.iso_code | json }},
+                        "url": {{ shop.url | append: product.url | json }},
+                        "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+                        "itemCondition": "https://schema.org/NewCondition"
+                      }
+                    }
+                  </script>
                   {%- render 'card-product-coll',
                     card_product: product,
                     media_aspect_ratio: section.settings.image_ratio,
